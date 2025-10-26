@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeedLink - AI Crop Classifier</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/assets/seed.svg') }}" 
+                    alt="SeedLink Logo" 
+                    style="width: 40px; height: 40px;">
+                </div>
+            </div>
+            <h1 class="title">SeedLink</h1>
+            <p class="subtitle">Artificial Intelligence-Driven Plant Identification </p>
+        </header>
+
+        <div class="main-content">
+            <div class="upload-section">
+                <div class="upload-card">
+                    <h2 class="card-title">Upload Your Image</h2>
+                    <p class="card-description">Drop or select an image to identify instantly</p>
+
+                    <div id="dropzone" class="dropzone">
+                        <div class="upload-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                        </div>
+                        <p class="dropzone-text">Click to upload or drag and drop</p>
+                        <p class="dropzone-subtext">PNG, JPG or JPEG (MAX. 16MB)</p>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                    </div>
+
+                    <div id="preview" class="preview" style="display: none;">
+                        <img id="previewImage" src="" alt="Preview">
+                        <button id="removeBtn" class="btn btn-secondary">Remove Image</button>
+                    </div>
+
+                    <button id="analyzeBtn" class="btn btn-primary" disabled>
+                        Analyze 
+                    </button>
+                </div>
+
+                <div id="results" class="results-card" style="display: none;">
+                    <h2 class="card-title">Identification Results</h2>
+                    <div id="resultsContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🌾</div>
+                <h3 class="feature-title">120Crops</h3>
+                <p class="feature-description">Trained on 120 different agricultural plants including fruits, vegetables and crops</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">High Accuracy</h3>
+                <p class="feature-description">95%+ accuracy using state-of-the-art ResNet50 deep learning model</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Instant Results</h3>
+                <p class="feature-description">Get predictions in seconds</p>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>
+                Powered by 
+                <a href="https://pytorch.org/" target="_blank" rel="noopener noreferrer">PyTorch</a>
+                &amp; 
+                <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener noreferrer">Flask</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
