@@ -4,7 +4,7 @@ AI-powered crop classification system using deep learning.
 
 ## Features
 - 🌾 Classifies 96 different agricultural crops
-- 🎯 95%+ accuracy using EfficientNetV2-M
+- 🎯 85%+ accuracy using EfficientNetV2-M
 - 🖼️ Drag & drop image upload interface
 - 🛒 E-commerce recommendation system
 - 🔌 REST API for MERN stack integration
