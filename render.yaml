@@ -3,11 +3,10 @@ services:
     name: SeedLink-airecognition
     env: docker
     dockerfilePath: ./Dockerfile
-    buildCommand: ""  # Docker handles build
-    startCommand: ""  # Docker CMD is used
     envVars:
       - key: PYTHON_VERSION
         value: "3.12"
-      # Add other environment variables here
-      # - key: OPENAI_API_KEY
-      #   value: "your-key"
+      - key: OPENAI_API_KEY
+        value: "sk-36523bbcf2eaf5b96b666d59c37e5106"
+      - key: ANOTHER_SECRET
+        value: "your-value"
