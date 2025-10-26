@@ -1,3 +1,4 @@
+// main.js
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
 const preview = document.getElementById('preview');
@@ -17,6 +18,8 @@ fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
         handleFile(file);
+    } else {
+        alert('Please select a valid image file (PNG, JPG, or JPEG)');
     }
 });
 
@@ -36,6 +39,8 @@ dropzone.addEventListener('drop', (e) => {
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
         handleFile(file);
+    } else {
+        alert('Please drop a valid image file (PNG, JPG, or JPEG)');
     }
 });
 
@@ -69,6 +74,7 @@ analyzeBtn.addEventListener('click', async () => {
 
     const formData = new FormData();
     formData.append('image', selectedFile);
+    formData.append('threshold', '0.30'); // 30% confidence threshold
 
     try {
         console.log('Sending request to /api/predict...');
@@ -80,47 +86,33 @@ analyzeBtn.addEventListener('click', async () => {
         console.log('Response status:', response.status);
         const data = await response.json();
         console.log('Response data:', data);
-        console.log('Predictions:', data.predictions);
 
-        if (data.success && data.predictions && data.predictions.length > 0) {
-            const topPrediction = data.predictions[0].crop;
-            console.log('Top prediction:', topPrediction);
-            
-            if (topPrediction) {
-                displayResults(topPrediction);
+        if (data.success) {
+            if (data.predictions && data.predictions.length > 0) {
+                displayResults(data);
             } else {
-                throw new Error('Plant name is undefined');
+                throw new Error('No predictions returned');
             }
         } else {
-            resultsContent.innerHTML = `
-                <div class="result-box" style="border-left-color: #dc3545;">
-                    <p style="color: #dc3545; font-weight: 600;">Error: ${data.error || 'Could not identify'}</p>
-                </div>
-            `;
-            results.style.display = 'block';
+            displayError(data.error || 'Could not identify the plant');
         }
     } catch (error) {
         console.error('Error details:', error);
-        resultsContent.innerHTML = `
-            <div class="result-box" style="border-left-color: #dc3545;">
-                <p style="color: #dc3545; font-weight: 600;">Error: ${error.message}</p>
-                <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Check the console for more details (Press F12)</p>
-            </div>
-        `;
-        results.style.display = 'block';
+        displayError(`Failed to analyze image: ${error.message}`);
     }
 
     analyzeBtn.disabled = false;
     analyzeBtn.textContent = 'Analyze';
 });
 
-function displayResults(prediction) {
-    const cleanName = prediction
+function displayResults(data) {
+    const topPrediction = data.predictions[0];
+    const cleanName = topPrediction.crop
         .split('_')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(' ');
     
-    resultsContent.innerHTML = `
+    let resultsHTML = `
         <div class="result-box">
             <div class="result-icon">🌿</div>
             <div class="result-crop">${cleanName}</div>
@@ -128,12 +120,52 @@ function displayResults(prediction) {
         </div>
         
         <div class="shop-prompt">
-            <p class="shop-prompt-title">Interested in ${cleanName} ?</p>
+            <p class="shop-prompt-title">Interested in ${cleanName}?</p>
             <p class="shop-prompt-text">Visit our shop to explore and purchase quality products!</p>
             <button class="btn btn-shop" onclick="window.location.href='/shop'">
                 Visit Shop 🛒
             </button>
         </div>
     `;
+    
+    resultsContent.innerHTML = resultsHTML;
     results.style.display = 'block';
+    
+    // Smooth scroll to results
+    results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
+
+function displayError(errorMessage) {
+    resultsContent.innerHTML = `
+        <div class="result-box error-box">
+            <div class="error-icon">❌</div>
+            <p class="error-title">Analysis Failed</p>
+            <p class="error-message">${errorMessage}</p>
+            <p class="error-suggestion">
+                Please try again with:
+                <br>• A clearer image
+                <br>• Better lighting
+                <br>• A closer view of the plant
+            </p>
+        </div>
+    `;
+    results.style.display = 'block';
+    results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Check server health on page load
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('/api/health');
+        const data = await response.json();
+        console.log('Server health:', data);
+        
+        if (data.success) {
+            console.log(`✓ Model loaded: ${data.model}`);
+            console.log(`✓ Classes: ${data.classes}`);
+            console.log(`✓ Validation Accuracy: ${data.val_accuracy}`);
+        }
+    } catch (error) {
+        console.error('Server health check failed:', error);
+    }
+});
