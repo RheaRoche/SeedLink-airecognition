@@ -2,10 +2,14 @@ services:
   - type: web
     name: SeedLink-airecognition
     env: docker
+    plan: starter
     dockerfilePath: ./Dockerfile
-    buildCommand: ""          # Dockerfile handles the build
-    startCommand: ""  
+    autoDeploy: true
     envVars:
-      - key: OPENAI_API_KEY
-        value: "sk-36523bbcf2eaf5b96b666d59c37e5106"
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        value: 6a989e2062104c81a18787498b57540d44662eb3e6fa5894e4774bb14e7f2605     # ← replace this
+      - key: OTHER_API_KEY
+        value: "replace_with_your_api_key"
 
